@@ -2,7 +2,7 @@ database host=localhost dbname=urwebsales user=postgres
 allow url *
 file /style.css style.css
 file /normalize.css normalize.css
-sql sql.sqt
+sql sql.sql
 rewrite url Sales/main
 
 $/option

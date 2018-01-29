@@ -1,5 +1,5 @@
-type school = {Id: int, Organisation: string, Website: string, Comments: string}
-table schools : {Id: int, Organisation: string, Website: string, Comments: string}
+type school = {Id: int, Organisation: string, Website: url, Comments: string}
+table schools : {Id: int, Organisation: string, Website: url, Comments: string}
                   PRIMARY KEY Id
 sequence schools_seq
 table contacts : {Id: int, School: int, Time: time, Text: string}
@@ -29,7 +29,7 @@ and renderSchoolRow (s: school) =
     return <xml>
   <tr>
     <td>{[s.Organisation]}</td>
-    <td><a href={bless s.Website}>{[s.Website]}</a></td>
+    <td><a href={s.Website}>{[s.Website]}</a></td>
     <td>{[s.Comments]}</td>
     <td><a link={editSchool (Some s.Id)}>Editeer School</a></td>
     <td>
@@ -54,7 +54,7 @@ and editSchool (oId : option int) =
                                                             FROM schools
                                                             WHERE Schools.Id = {[id]})));
     school <- return (Option.get {Organisation = "", Website = "", Comments = ""}
-                                 (Option.mp (fn s => s -- #Id) existingSchool));
+                                 (Option.mp (fn s => s -- #Id -- #Website ++ {Website = show s.Website}) existingSchool));
     return <xml>
       <head>{styleTag} </head>
       <body>
@@ -76,17 +76,17 @@ and editSchool (oId : option int) =
       </body>
     </xml>
 
-and saveSchool (oId : option int) r =
+and saveSchool (oId : option int) (r: {Organisation: string, Website: string, Comments: string}) =
     (case oId of
        None =>
        id <- nextval schools_seq;
        dml (INSERT INTO schools
               (Id, Organisation, Website, Comments)
             VALUES
-              ({[id]}, {[r.Organisation]}, {[r.Website]}, {[r.Comments]}))
+              ({[id]}, {[r.Organisation]}, {[bless r.Website]}, {[r.Comments]}))
      | Some id => dml (UPDATE schools
                        SET Organisation = {[r.Organisation]}
-                         , Website = {[r.Website]}
+                         , Website = {[bless r.Website]}
                          , Comments = {[r.Comments]}
                        WHERE Id = {[id]}));
     redirect (url (main ()))
