@@ -25,7 +25,7 @@ fun main () =
     </xml>
 
 and renderSchoolRow (s: school) =
-    lastContact <- oneOrNoRows1 (SELECT * FROM contacts WHERE Contacts.School = {[s.Id]} ORDER BY Contacts.Id DESC);
+    lastContact <- oneOrNoRows1 (SELECT * FROM contacts WHERE Contacts.School = {[s.Id]} ORDER BY Contacts.Time ASC);
     return <xml>
   <tr>
     <td>{[s.Organisation]}</td>
