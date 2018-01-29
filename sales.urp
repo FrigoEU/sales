@@ -1,0 +1,10 @@
+database host=localhost dbname=urwebsales user=postgres
+allow url *
+file /style.css style.css
+file /normalize.css normalize.css
+sql sql.sqt
+rewrite url Sales/main
+
+$/option
+$/monad
+sales
